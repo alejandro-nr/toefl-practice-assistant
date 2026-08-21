@@ -1,6 +1,22 @@
 from toefl_writing_prep.models import EmailExercise
 
 
+def test_email_exercise_from_dict():
+    data = {
+        "context": "You missed class yesterday.",
+        "recipient": "Professor Smith",
+        "objectives": ["Explain your absence", "Ask for lecture notes"],
+        "bonus": ["Use formal greetings"],
+    }
+
+    exercise = EmailExercise.from_dict(data)
+
+    assert exercise.context == data["context"]
+    assert exercise.recipient == data["recipient"]
+    assert exercise.objectives == data["objectives"]
+    assert exercise.bonus == data["bonus"]
+
+
 def test_email_exercise_str_formatting():
     exercise = EmailExercise(
         context="You missed class yesterday.",

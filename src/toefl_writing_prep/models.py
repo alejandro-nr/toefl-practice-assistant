@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class EmailExercise:
     def __init__(
         self, context: str, recipient: str, objectives: list[str], bonus: list[str]
@@ -6,6 +9,16 @@ class EmailExercise:
         self.recipient = recipient
         self.objectives = objectives
         self.bonus = bonus
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "EmailExercise":
+        """Creates an EmailExercise instance from a dictionary."""
+        return cls(
+            context=data["context"],
+            recipient=data["recipient"],
+            objectives=data["objectives"],
+            bonus=data["bonus"],
+        )
 
     def __str__(self):
         s = self.context
