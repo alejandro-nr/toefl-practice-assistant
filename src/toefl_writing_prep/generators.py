@@ -1,4 +1,6 @@
+from toefl_writing_prep.models import EmailExercise
 from typing import Any
+import json
 
 
 class EmailExerciseGenerator:
@@ -28,3 +30,12 @@ class EmailExerciseGenerator:
     def set_model(self, new_model: str) -> None:
         """Updates the target LLM model."""
         self.model = new_model
+
+    def parse_response(self, response_data: dict[str, Any]) -> EmailExercise:
+        """Parses the response from the API into an EmailExercise object."""
+        try:
+            content = response_data["choices"][0]["message"]["content"]
+            exercise_data = json.loads(content)
+            return EmailExercise.from_dict(exercise_data)
+        except (KeyError, IndexError, json.JSONDecodeError) as e:
+            raise ValueError(f"Invalid API response format: {e}") from e
