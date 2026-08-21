@@ -1,6 +1,8 @@
-from toefl_writing_prep.models import EmailExercise
-from typing import Any
 import json
+from typing import Any
+
+from toefl_writing_prep.api_client import OpenRouterClient
+from toefl_writing_prep.models import EmailExercise
 
 
 class EmailExerciseGenerator:
@@ -11,10 +13,12 @@ class EmailExerciseGenerator:
         model: str,
         system_prompt: str,
         response_format: dict[str, Any],
+        api_client: OpenRouterClient,
     ) -> None:
         self.model = model
         self.system_prompt = system_prompt
         self.response_format = response_format
+        self.api_client = api_client
 
     def build_payload(self, user_prompt: str) -> dict[str, Any]:
         """Constructs the payload dictionary for the OpenRouter API."""
@@ -39,3 +43,9 @@ class EmailExerciseGenerator:
             return EmailExercise.from_dict(exercise_data)
         except (KeyError, IndexError, json.JSONDecodeError) as e:
             raise ValueError(f"Invalid API response format: {e}") from e
+
+    def generate(self, user_prompt: str) -> EmailExercise:
+        """Generates a new exercise using the provided user prompt."""
+        payload = self.build_payload(user_prompt)
+        response_data = self.api_client.post(payload)
+        return self.parse_response(response_data)
