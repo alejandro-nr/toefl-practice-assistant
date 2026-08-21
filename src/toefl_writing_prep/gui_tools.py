@@ -71,23 +71,47 @@ class LabeledCombobox(ttk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title("Widget Manual Test")
     root.columnconfigure(index=0, weight=1)
 
+    # Widgets
     labeled_entry = LabeledEntry(
         parent=root,
-        label_text="Label text",
-        label_width=20,
+        label_text="Label text:",
+        label_width=18,
         initial_entry_text="Initial text...",
     )
-    labeled_entry.grid(row=0, column=0, sticky="nwe")
+    labeled_entry.grid(row=0, column=0, sticky="nwe", padx=10, pady=5)
 
     labeled_combobox = LabeledCombobox(
         parent=root,
-        text="Combo-box label",
-        label_width=20,
+        text="Combo-box label:",
+        label_width=18,
         combobox_width=20,
-        choices=[f"choice {i}" for i in range(1, 11)],
+        choices=[f"Choice {i}" for i in range(1, 6)],
     )
-    labeled_combobox.grid(row=1, column=0, sticky="nwe")
+    labeled_combobox.grid(row=1, column=0, sticky="nwe", padx=10, pady=5)
+
+    # Label to print results on the screen
+    output_label = ttk.Label(root, text="Status: Ready", foreground="blue")
+    output_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
+
+    # Validate the "bind" functionality of LabeledCombobox
+    def on_combobox_changed(event: tk.Event) -> None:
+        selected = labeled_combobox.get_choice()
+        output_label.config(text=f"Event triggered: Selected '{selected}'")
+
+    labeled_combobox.bind_combobox(on_combobox_changed)
+
+    # Validate get methods
+    def print_values() -> None:
+        entry_val = labeled_entry.get()
+        combo_val = labeled_combobox.get_choice()
+        output_label.config(
+            text=f"Button click: Entry='{entry_val}' | Combo='{combo_val}'"
+        )
+
+    test_button = ttk.Button(root, text="Print Values", command=print_values)
+    test_button.grid(row=3, column=0, sticky="e", padx=10, pady=10)
 
     root.mainloop()
