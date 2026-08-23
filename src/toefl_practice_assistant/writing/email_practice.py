@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from toefl_practice_assistant.core.gui_tools import LabeledEntry, LabeledCombobox
+
 
 class InstructionsFrame(ttk.Frame):
     """Custom widget that holds the instructions for an email exercise."""
@@ -51,12 +53,64 @@ class InstructionsFrame(ttk.Frame):
         self.on_checkbutton()
 
 
+class ApiConfigFrame(ttk.Frame):
+    """Custom widget to configure options related to the OpenRouter API."""
+
+    def __init__(self, parent: tk.Misc, model_options: list[str]) -> None:
+        super().__init__(parent)
+        self.columnconfigure(index=0, weight=1)
+
+        self.api_entry = LabeledEntry(
+            parent=self,
+            label_text="API key",
+            label_width=5,
+            show="*",
+        )
+        self.api_entry.grid(row=0, column=0, sticky="we", padx=2, pady=5)
+
+        self.show_api_key = tk.BooleanVar(value=False)
+        self.visibility_checkbutton = ttk.Checkbutton(
+            self,
+            text="show key",
+            command=self.change_visibility,
+            variable=self.show_api_key,
+        )
+        self.visibility_checkbutton.grid(row=0, column=1, sticky="we", padx=2, pady=5)
+
+        self.model_combobox = LabeledCombobox(
+            parent=self,
+            text="Model",
+            label_width=5,
+            combobox_width=10,
+            choices=model_options,
+        )
+        self.model_combobox.grid(row=1, column=0, sticky="we", padx=2, pady=5)
+
+    def get_api_key(self) -> str:
+        """Returns the current value of the api key entry."""
+        return self.api_entry.get()
+
+    def get_model(self) -> str:
+        """Returns the selected model."""
+        return self.model_combobox.get_choice()
+
+    def change_visibility(self) -> None:
+        """Configures the visibility of the api-key according to the visibility_checkbutton"""
+        if self.show_api_key.get():
+            self.api_entry.set_show(char="")
+        else:
+            self.api_entry.set_show(char="*")
+
+
 if __name__ == "__main__":
     root = tk.Tk()
-    root.rowconfigure(index=0, weight=1)
+    # root.rowconfigure(index=0, weight=1)
     root.columnconfigure(index=0, weight=1)
 
-    instructions_frame = InstructionsFrame(root)
-    instructions_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+    # instructions_frame = InstructionsFrame(root)
+    # instructions_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    api_config_frame = ApiConfigFrame(root, model_options=["Gemini", "GPT", "Claude"])
+    api_config_frame.grid(row=0, column=0, sticky="we", padx=5, pady=5)
 
     root.mainloop()
