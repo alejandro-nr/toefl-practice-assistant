@@ -35,6 +35,10 @@ class LabeledEntry(ttk.Frame):
         """Configures the show parameter of the entry."""
         self.entry.configure(show=char)
 
+    def clear(self) -> None:
+        """Clears the text from the entry."""
+        self.entry.delete(0, tk.END)
+
 
 class LabeledCombobox(ttk.Frame):
     def __init__(
