@@ -1,8 +1,8 @@
 import json
 from typing import Any
 
-from toefl_practice_assistant.api_client import OpenRouterClient
-from toefl_practice_assistant.models import EmailExercise
+from toefl_practice_assistant.core.api_client import OpenRouterClient
+from toefl_practice_assistant.writing.models import EmailExercise
 
 
 class EmailExerciseGenerator:

@@ -1,4 +1,4 @@
-from toefl_practice_assistant.models import EmailExercise
+from toefl_practice_assistant.writing.models import EmailExercise
 
 
 def test_email_exercise_from_dict():

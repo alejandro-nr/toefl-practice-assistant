@@ -1,4 +1,4 @@
-from toefl_practice_assistant.api_client import OpenRouterClient
+from toefl_practice_assistant.core.api_client import OpenRouterClient
 
 
 def test_client_initialization():
