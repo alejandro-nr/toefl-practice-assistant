@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from toefl_writing_prep.api_client import OpenRouterClient
-from toefl_writing_prep.generators import EmailExerciseGenerator
+from toefl_practice_assistant.api_client import OpenRouterClient
+from toefl_practice_assistant.generators import EmailExerciseGenerator
 
 
 @pytest.fixture

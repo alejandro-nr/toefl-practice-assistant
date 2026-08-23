@@ -258,7 +258,7 @@ wheels = [
 ]
 
 [[package]]
-name = "toefl-writing-prep"
+name = "toefl-practice-assistant"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     labeled_combobox.bind_combobox(on_combobox_changed)
 
-    # Validate get methods
+    # Validate "get" methods
     def print_values() -> None:
         entry_val = labeled_entry.get()
         combo_val = labeled_combobox.get_choice()
