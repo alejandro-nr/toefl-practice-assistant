@@ -158,18 +158,63 @@ class PromptsConfigFrame(ttk.Frame):
         return self.solution_tag_entry.get()
 
 
+class SettingsFrame(ttk.Frame):
+    """Container frame grouping API configuration and prompt settings."""
+
+    def __init__(
+        self,
+        parent: tk.Misc,
+        model_options: list[str],
+        default_prompt: str = "Generate a new email exercise.",
+    ) -> None:
+        super().__init__(parent)
+        self.columnconfigure(index=0, weight=1)
+        self.rowconfigure(index=1, weight=1)
+
+        self.api_config_frame = ApiConfigFrame(
+            parent=self,
+            model_options=model_options,
+        )
+        self.api_config_frame.grid(row=0, column=0, sticky="we", padx=10, pady=(5, 10))
+
+        self.prompts_config_frame = PromptsConfigFrame(
+            parent=self,
+            default_prompt=default_prompt,
+        )
+        self.prompts_config_frame.grid(
+            row=1, column=0, sticky="nsew", padx=10, pady=(10, 5)
+        )
+
+    def get_api_key(self) -> str:
+        """Returns the current API key."""
+        return self.api_config_frame.get_api_key()
+
+    def get_model(self) -> str:
+        """Returns the currently selected model."""
+        return self.api_config_frame.get_model()
+
+    def get_exercise_generation_prompt(self) -> str:
+        """Returns the prompt template for exercise generation."""
+        return self.prompts_config_frame.get_exercise_generation_prompt()
+
+    def get_exercise_tag(self) -> str:
+        """Returns the tag delimiter for the exercise text."""
+        return self.prompts_config_frame.get_exercise_tag()
+
+    def get_solution_tag(self) -> str:
+        """Returns the tag delimiter for the solution text."""
+        return self.prompts_config_frame.get_solution_tag()
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     root.rowconfigure(index=0, weight=1)
     root.columnconfigure(index=0, weight=1)
 
-    # instructions_frame = InstructionsFrame(root)
-    # instructions_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-
-    # api_config_frame = ApiConfigFrame(root, model_options=["Gemini", "GPT", "Claude"])
-    # api_config_frame.grid(row=0, column=0, sticky="we", padx=5, pady=5)
-
-    prompts_config_frame = PromptsConfigFrame(root)
-    prompts_config_frame.grid(row=0, column=0, sticky="nswe", padx=5, pady=5)
+    settings_frame = SettingsFrame(
+        parent=root,
+        model_options=["Gemini", "GPT", "Claude", "DeepSeek"],
+    )
+    settings_frame.grid(row=0, column=0, sticky="nsew")
 
     root.mainloop()
