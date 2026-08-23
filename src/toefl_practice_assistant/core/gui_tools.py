@@ -10,6 +10,7 @@ class LabeledEntry(ttk.Frame):
         label_text: str,
         label_width: int,
         initial_entry_text: str | None = None,
+        show: str | None = None,
     ) -> None:
         """A custom widget pairing a label with a text entry in a single row."""
         super().__init__(parent)
@@ -20,6 +21,8 @@ class LabeledEntry(ttk.Frame):
 
         self.entry = ttk.Entry(self)
         self.entry.grid(row=0, column=1, sticky="ew")
+        if show is not None:
+            self.entry.configure(show=show)
 
         if initial_entry_text is not None:
             self.entry.insert(0, initial_entry_text)
@@ -27,6 +30,10 @@ class LabeledEntry(ttk.Frame):
     def get(self) -> str:
         """Returns the current text in the entry."""
         return self.entry.get()
+
+    def set_show(self, char: str) -> None:
+        """Configures the show parameter of the entry."""
+        self.entry.configure(show=char)
 
 
 class LabeledCombobox(ttk.Frame):
