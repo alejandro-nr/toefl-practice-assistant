@@ -206,15 +206,58 @@ class SettingsFrame(ttk.Frame):
         return self.prompts_config_frame.get_solution_tag()
 
 
+class EmailResponseFrame(ttk.Frame):
+    """Custom widget where the user writes the email response."""
+
+    def __init__(self, parent: tk.Misc) -> None:
+        super().__init__(parent)
+
+        self.rowconfigure(2, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        self.recipient_entry = LabeledEntry(parent=self, label_text="To", label_width=6)
+        self.recipient_entry.grid(row=0, column=0, sticky="we", padx=5, pady=5)
+
+        self.subject_entry = LabeledEntry(
+            parent=self, label_text="Subject", label_width=6
+        )
+        self.subject_entry.grid(row=1, column=0, sticky="we", padx=5, pady=5)
+
+        self.text_box = tk.Text(
+            self, font=("Arial", 14), width=50, wrap="word", padx=5, pady=5
+        )
+        self.text_box.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
+
+        self.clear_button = ttk.Button(self, text="clear", command=self.clear)
+        self.clear_button.grid(row=3, column=0, sticky="e", padx=5, pady=5)
+
+    def get_response(self) -> dict[str, str]:
+        """Returns a dictionary with the recipient, subject and body of the current solution."""
+        return {
+            "recipient": self.recipient_entry.get(),
+            "subject": self.subject_entry.get(),
+            "body": self.text_box.get("1.0", tk.END).strip(),
+        }
+
+    def clear(self) -> None:
+        """Clears all input fields in the response frame."""
+        self.recipient_entry.clear()
+        self.subject_entry.clear()
+        self.text_box.delete("1.0", tk.END)
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     root.rowconfigure(index=0, weight=1)
     root.columnconfigure(index=0, weight=1)
 
-    settings_frame = SettingsFrame(
-        parent=root,
-        model_options=["Gemini", "GPT", "Claude", "DeepSeek"],
-    )
-    settings_frame.grid(row=0, column=0, sticky="nsew")
+    # settings_frame = SettingsFrame(
+    #     parent=root,
+    #     model_options=["Gemini", "GPT", "Claude", "DeepSeek"],
+    # )
+    # settings_frame.grid(row=0, column=0, sticky="nsew")
+
+    email_frame = EmailResponseFrame(root)
+    email_frame.grid(row=0, column=0, sticky="nsew")
 
     root.mainloop()
