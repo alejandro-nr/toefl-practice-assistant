@@ -317,8 +317,9 @@ class EmailPracticeApp(tk.Tk):
         hpane.add(self.email_response_frame, weight=1)
 
         # Right pane = assistant chat
-        self.assistant_chat = LLMChatFrame(parent=hpane)
-        hpane.add(self.assistant_chat)
+        self.assistant_chat_frame = LLMChatFrame(parent=hpane)
+        self.assistant_chat_frame.set_send_command(self.on_send_press)
+        hpane.add(self.assistant_chat_frame)
 
         # API related
         self.api_client = OpenRouterClient(api_key="")
@@ -356,6 +357,40 @@ class EmailPracticeApp(tk.Tk):
 
         self.instructions_frame.set_exercise(exercise)
         self.config_and_exercise_notebook.select(self.instructions_frame)
+
+    def on_send_press(self) -> None:
+        """Handles sending user chat messages and processing placeholders."""
+        raw_message = self.assistant_chat_frame.get_input_text().strip()
+        if not raw_message:
+            return
+
+        # Visual updates in UI
+        self.assistant_chat_frame.clear_input()
+        self.assistant_chat_frame.add_user_message(raw_message)
+
+        # Sync model selection
+        self.chat_session.model = self.settings_frame.get_model()
+
+        # Build solution string (To, Subject, Body)
+        response_data = self.email_response_frame.get_response()
+        formatted_solution = (
+            f"To: {response_data['recipient']}\n"
+            f"Subject: {response_data['subject']}\n\n"
+            f"{response_data['body']}"
+        ).strip()
+
+        # Process placeholders
+        processed_message = raw_message.replace(
+            self.settings_frame.get_exercise_tag(),
+            self.instructions_frame.get_exercise().strip(),
+        )
+        processed_message = processed_message.replace(
+            self.settings_frame.get_solution_tag(),
+            formatted_solution,
+        )
+
+        assistant_response = self.chat_session.send_message(processed_message)
+        self.assistant_chat_frame.add_assistant_message(assistant_response)
 
 
 if __name__ == "__main__":
