@@ -2,7 +2,18 @@ import tkinter as tk
 from collections.abc import Callable
 from tkinter import ttk
 
+from toefl_practice_assistant.core.api_client import OpenRouterClient
+from toefl_practice_assistant.core.chat_gui import LLMChatFrame
 from toefl_practice_assistant.core.gui_tools import LabeledCombobox, LabeledEntry
+from toefl_practice_assistant.core.llm_chat import LLMChatSession
+from toefl_practice_assistant.writing.generators import (
+    EmailExerciseGenerator,
+)
+from toefl_practice_assistant.writing.prompts import (
+    EMAIL_ASSISTANT_SYSTEM_PROMPT,
+    EMAIL_GENERATION_FORMAT,
+    EMAIL_GENERATOR_SYSTEM_PROMPT,
+)
 
 
 class InstructionsFrame(ttk.Frame):
@@ -21,7 +32,7 @@ class InstructionsFrame(ttk.Frame):
             font=("Arial", 14),
             wrap="word",
         )
-        self.exercise_textbox.grid(row=0, column=0, sticky="nsew")
+        self.exercise_textbox.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
         self.edition_enabled = tk.BooleanVar(value=False)
         self.edition_checkbutton = ttk.Checkbutton(
@@ -32,7 +43,10 @@ class InstructionsFrame(ttk.Frame):
             variable=self.edition_enabled,
             command=self.on_checkbutton,
         )
-        self.edition_checkbutton.grid(row=1, column=0, sticky="e")
+        self.edition_checkbutton.grid(row=1, column=1, sticky="e", pady=5)
+
+        self.generate_button = ttk.Button(self, text="generate")
+        self.generate_button.grid(row=1, column=0, sticky="e", padx=5, pady=5)
 
         self.exercise_textbox.insert("1.0", "No exercise loaded...")
         self.exercise_textbox.configure(state="disabled")
@@ -256,15 +270,74 @@ class EmailResponseFrame(ttk.Frame):
         self.text_box.delete("1.0", tk.END)
 
 
+class EmailPracticeApp(tk.Tk):
+    def __init__(
+        self,
+        model_options: list[str],
+        assistant_system_prompt: str,
+        email_generator_system_prompt: str,
+        email_generation_format: dict,
+        default_prompt: str = "Generate a new email exercise.",
+    ) -> None:
+        super().__init__()
+        self.title("TOEFL Practice: Writing an e-mail")
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        hpane = ttk.PanedWindow(self, orient="horizontal")
+        hpane.grid(row=0, column=0, sticky="nsew")
+
+        # Left pane = settings and exercise instructions
+        self.config_and_exercise_notebook = ttk.Notebook(hpane)
+        self.config_and_exercise_notebook.grid(row=0, column=0, sticky="nsew")
+
+        self.settings_frame = SettingsFrame(
+            parent=self.config_and_exercise_notebook,
+            model_options=model_options,
+            default_prompt=default_prompt,
+        )
+        self.config_and_exercise_notebook.add(self.settings_frame, text="settings")
+
+        self.instructions_frame = InstructionsFrame(
+            parent=self.config_and_exercise_notebook
+        )
+        self.config_and_exercise_notebook.add(self.instructions_frame, text="exercise")
+
+        hpane.add(self.config_and_exercise_notebook, weight=1)
+
+        # Central pane = email writing
+        self.email_response_frame = EmailResponseFrame(parent=hpane)
+        hpane.add(self.email_response_frame, weight=1)
+
+        # Right pane = assistant chat
+        self.assistant_chat = LLMChatFrame(parent=hpane)
+        hpane.add(self.assistant_chat)
+
+        # API related
+        self.api_client = OpenRouterClient(api_key="")
+        self.chat_session = LLMChatSession(
+            api_client=self.api_client,
+            model=self.settings_frame.get_model(),
+            system_prompt=assistant_system_prompt,
+        )
+        self.exercise_generator = EmailExerciseGenerator(
+            model=self.settings_frame.get_model(),
+            system_prompt=email_generator_system_prompt,
+            response_format=email_generation_format,
+            api_client=self.api_client,
+        )
+
+        # Prompts and formats
+        self.assistant_system_prompt = assistant_system_prompt
+        self.email_generator_system_prompt = email_generator_system_prompt
+        self.email_generation_format = email_generation_format
+
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.rowconfigure(0, weight=1)
-    root.columnconfigure(0, weight=1)
-
-    settings_frame = SettingsFrame(
-        parent=root,
+    email_practice_app = EmailPracticeApp(
         model_options=["Gemini", "GPT", "Claude"],
+        assistant_system_prompt=EMAIL_ASSISTANT_SYSTEM_PROMPT,
+        email_generator_system_prompt=EMAIL_GENERATOR_SYSTEM_PROMPT,
+        email_generation_format=EMAIL_GENERATION_FORMAT,
     )
-    settings_frame.grid(row=0, column=0, sticky="nsew")
-
-    root.mainloop()
+    email_practice_app.mainloop()
