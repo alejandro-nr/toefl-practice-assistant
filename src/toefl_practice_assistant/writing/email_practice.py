@@ -1,4 +1,5 @@
 import tkinter as tk
+from collections.abc import Callable
 from tkinter import ttk
 
 from toefl_practice_assistant.core.gui_tools import LabeledCombobox, LabeledEntry
@@ -66,7 +67,7 @@ class ApiConfigFrame(ttk.Frame):
             label_width=5,
             show="*",
         )
-        self.api_entry.grid(row=0, column=0, sticky="we", padx=2, pady=5)
+        self.api_entry.grid(row=0, column=0, columnspan=2, sticky="we", padx=2, pady=2)
 
         self.show_api_key = tk.BooleanVar(value=False)
         self.visibility_checkbutton = ttk.Checkbutton(
@@ -75,7 +76,10 @@ class ApiConfigFrame(ttk.Frame):
             command=self.change_visibility,
             variable=self.show_api_key,
         )
-        self.visibility_checkbutton.grid(row=0, column=1, sticky="we", padx=2, pady=5)
+        self.visibility_checkbutton.grid(row=1, column=0, sticky="e", padx=2)
+
+        self.api_button = ttk.Button(self, text="save key")
+        self.api_button.grid(row=1, column=1, sticky="e", padx=2)
 
         self.model_combobox = LabeledCombobox(
             parent=self,
@@ -84,7 +88,9 @@ class ApiConfigFrame(ttk.Frame):
             combobox_width=10,
             choices=model_options,
         )
-        self.model_combobox.grid(row=1, column=0, sticky="we", padx=2, pady=5)
+        self.model_combobox.grid(
+            row=2, column=0, columnspan=2, sticky="we", padx=5, pady=5
+        )
 
     def get_api_key(self) -> str:
         """Returns the current value of the api key entry."""
@@ -100,6 +106,10 @@ class ApiConfigFrame(ttk.Frame):
             self.api_entry.set_show(char="")
         else:
             self.api_entry.set_show(char="*")
+
+    def set_api_button_command(self, callback: Callable[[], None]) -> None:
+        """Sets or updates the api button command callback."""
+        self.api_button.configure(command=callback)
 
 
 class PromptsConfigFrame(ttk.Frame):
@@ -248,16 +258,13 @@ class EmailResponseFrame(ttk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.rowconfigure(index=0, weight=1)
-    root.columnconfigure(index=0, weight=1)
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
 
-    # settings_frame = SettingsFrame(
-    #     parent=root,
-    #     model_options=["Gemini", "GPT", "Claude", "DeepSeek"],
-    # )
-    # settings_frame.grid(row=0, column=0, sticky="nsew")
-
-    email_frame = EmailResponseFrame(root)
-    email_frame.grid(row=0, column=0, sticky="nsew")
+    settings_frame = SettingsFrame(
+        parent=root,
+        model_options=["Gemini", "GPT", "Claude"],
+    )
+    settings_frame.grid(row=0, column=0, sticky="nsew")
 
     root.mainloop()
