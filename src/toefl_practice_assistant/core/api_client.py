@@ -24,3 +24,8 @@ class OpenRouterClient:
         """Sends a POST request to OpenRouter and returns the parsed JSON."""
         response = requests.post(self.api_url, headers=self.headers, json=payload)
         return response.json()
+
+    def set_api_key(self, new_api_key: str) -> None:
+        """Sets or updates the api_key."""
+        self.api_key = new_api_key
+        self.headers["Authorization"] = f"Bearer {self.api_key}"
