@@ -6,6 +6,7 @@ from toefl_practice_assistant.core.api_client import OpenRouterClient
 from toefl_practice_assistant.core.chat_gui import LLMChatFrame
 from toefl_practice_assistant.core.gui_tools import LabeledCombobox, LabeledEntry
 from toefl_practice_assistant.core.llm_chat import LLMChatSession
+from toefl_practice_assistant.core.timer import TimerFrame
 from toefl_practice_assistant.writing.generators import (
     EmailExerciseGenerator,
 )
@@ -240,24 +241,27 @@ class EmailResponseFrame(ttk.Frame):
     def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
 
-        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
         self.columnconfigure(0, weight=1)
 
+        self.timer_frame = TimerFrame(parent=self, duration=420)
+        self.timer_frame.grid(row=0, column=0, sticky="e", padx=5, pady=5)
+
         self.recipient_entry = LabeledEntry(parent=self, label_text="To", label_width=6)
-        self.recipient_entry.grid(row=0, column=0, sticky="we", padx=5, pady=5)
+        self.recipient_entry.grid(row=1, column=0, sticky="we", padx=5, pady=5)
 
         self.subject_entry = LabeledEntry(
             parent=self, label_text="Subject", label_width=6
         )
-        self.subject_entry.grid(row=1, column=0, sticky="we", padx=5, pady=5)
+        self.subject_entry.grid(row=2, column=0, sticky="we", padx=5, pady=5)
 
         self.text_box = tk.Text(
             self, font=("Arial", 14), width=50, wrap="word", padx=5, pady=5
         )
-        self.text_box.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
+        self.text_box.grid(row=3, column=0, sticky="nsew", padx=5, pady=5)
 
         self.clear_button = ttk.Button(self, text="clear", command=self.clear)
-        self.clear_button.grid(row=3, column=0, sticky="e", padx=5, pady=5)
+        self.clear_button.grid(row=4, column=0, sticky="e", padx=5, pady=5)
 
     def get_response(self) -> dict[str, str]:
         """Returns a dictionary with the recipient, subject and body of the current solution."""
