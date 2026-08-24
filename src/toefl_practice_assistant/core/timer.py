@@ -1,3 +1,8 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+import time
+
 class Timer:
     IDLE = "idle"
     RUNNING = "running"
@@ -38,3 +43,77 @@ class Timer:
         """Sets a new duration and resets the timer to idle state."""
         self.duration = duration
         self.reset()
+
+
+class TimerFrame(ttk.Frame):
+    def __init__(self, parent: tk.Misc, duration: int = 420) -> None:
+        super().__init__(parent)
+        self.columnconfigure(index=0, weight=1)
+
+        duration = max(duration, 0)
+        duration = min(duration, 30 * 60)
+        self.timer = Timer(duration=duration)
+        self._after_id = None
+
+        self.time_label = ttk.Label(
+            self,
+            text=self.convert_seconds_to_timer_string(self.timer.duration),
+        )
+        self.time_label.grid(row=0, column=0, padx=2, pady=2)
+
+        self.timer_button = ttk.Button(self, text="start", command=self.start)
+        self.timer_button.grid(row=0, column=1, padx=2, pady=2)
+
+    def convert_seconds_to_timer_string(self, seconds: int) -> str:
+        return time.strftime("%M:%S", time.gmtime(seconds))
+
+    def start(self) -> None:
+        self.timer.start()
+        self.timer_button.configure(
+            text="reset",
+            command=self.reset,
+        )
+        self._after_id = self.after(1000, self.update_clock)
+
+    def reset(self) -> None:
+        if self._after_id is not None:
+            self.after_cancel(self._after_id)
+            self._after_id = None
+
+        self.timer.reset()
+        self.time_label.configure(
+            text=self.convert_seconds_to_timer_string(self.timer.duration),
+        )
+        self.timer_button.configure(
+            text="start",
+            command=self.start,
+        )
+
+    def update_clock(self) -> None:
+        self.timer.update(elapsed=1)
+        self.time_label.configure(
+            text=self.convert_seconds_to_timer_string(self.timer.time_left)
+        )
+
+        if self.timer.state == Timer.RUNNING:
+            self._after_id = self.after(ms=1000, func=self.update_clock)
+        elif self.timer.state == Timer.FINISHED:
+            self._after_id = None
+            self.time_label.config(
+                text=self.convert_seconds_to_timer_string(self.timer.time_left)
+            )
+            self.update_idletasks()
+            messagebox.showinfo(title="Message from Timer", message="Time's up!")
+
+
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.columnconfigure(index=0, weight=1)
+
+    timer_frame = TimerFrame(root, duration=10)
+    timer_frame.grid(row=0, column=0, sticky="we")
+
+    root.mainloop()
+
