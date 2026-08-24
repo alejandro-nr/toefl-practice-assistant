@@ -300,6 +300,9 @@ class EmailPracticeApp(tk.Tk):
             model_options=model_options,
             default_prompt=default_prompt,
         )
+        self.settings_frame.api_config_frame.set_api_button_command(
+            self.on_save_api_press
+        )
         self.config_and_exercise_notebook.add(self.settings_frame, text="settings")
 
         self.instructions_frame = InstructionsFrame(
@@ -331,15 +334,39 @@ class EmailPracticeApp(tk.Tk):
             api_client=self.api_client,
         )
 
+        self.instructions_frame.set_generate_command(self.handle_generate_exercise)
+
         # Prompts and formats
         self.assistant_system_prompt = assistant_system_prompt
         self.email_generator_system_prompt = email_generator_system_prompt
         self.email_generation_format = email_generation_format
 
+    def on_save_api_press(self) -> None:
+        """Saves the API key from the settings frame into the api_client."""
+        self.api_client.set_api_key(self.settings_frame.get_api_key())
+
+    def handle_generate_exercise(self) -> None:
+        """Generates a new exercise and updates the InstructionsFrame."""
+
+        # Sync the currently selected model before calling the API
+        self.exercise_generator.model = self.settings_frame.get_model()
+
+        exercise_prompt = self.settings_frame.get_exercise_generation_prompt()
+        exercise = str(self.exercise_generator.generate(user_prompt=exercise_prompt))
+
+        self.instructions_frame.set_exercise(exercise)
+        self.config_and_exercise_notebook.select(self.instructions_frame)
+
 
 if __name__ == "__main__":
+    model_options = [
+        "google/gemini-3.7-flash",
+        "anthropic/claude-sonnet-4.6",
+        "google/gemini-2.5-flash",
+        "openai/gpt-5.6-luna",
+    ]
     email_practice_app = EmailPracticeApp(
-        model_options=["Gemini", "GPT", "Claude"],
+        model_options=model_options,
         assistant_system_prompt=EMAIL_ASSISTANT_SYSTEM_PROMPT,
         email_generator_system_prompt=EMAIL_GENERATOR_SYSTEM_PROMPT,
         email_generation_format=EMAIL_GENERATION_FORMAT,
