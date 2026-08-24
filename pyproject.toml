@@ -1,7 +1,7 @@
 [project]
 name = "toefl-practice-assistant"
 version = "0.1.0"
-description = "Add your description here"
+description = "An AI-powered desktop application to practice and receive feedback for the TOEFL iBT exam."
 readme = "README.md"
 authors = [
     { name = "alejandro negrete", email = "alejandro.nr235@gmail.com" }
