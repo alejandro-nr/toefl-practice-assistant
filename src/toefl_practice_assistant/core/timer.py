@@ -1,7 +1,7 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
-
 import time
+import tkinter as tk
+from tkinter import messagebox, ttk
+
 
 class Timer:
     IDLE = "idle"
@@ -106,8 +106,6 @@ class TimerFrame(ttk.Frame):
             messagebox.showinfo(title="Message from Timer", message="Time's up!")
 
 
-
-
 if __name__ == "__main__":
     root = tk.Tk()
     root.columnconfigure(index=0, weight=1)
@@ -116,4 +114,3 @@ if __name__ == "__main__":
     timer_frame.grid(row=0, column=0, sticky="we")
 
     root.mainloop()
-
