@@ -393,7 +393,7 @@ class EmailPracticeApp(tk.Tk):
         self.assistant_chat_frame.add_assistant_message(assistant_response)
 
 
-if __name__ == "__main__":
+def main() -> None:
     model_options = [
         "google/gemini-3.7-flash",
         "anthropic/claude-sonnet-4.6",
@@ -407,3 +407,7 @@ if __name__ == "__main__":
         email_generation_format=EMAIL_GENERATION_FORMAT,
     )
     email_practice_app.mainloop()
+
+
+if __name__ == "__main__":
+    main()
