@@ -67,6 +67,10 @@ class InstructionsFrame(ttk.Frame):
         self.exercise_textbox.insert("1.0", text)
         self.on_checkbutton()
 
+    def set_generate_command(self, callback: Callable[[], None]) -> None:
+        """Sets or updates the generate button command callback."""
+        self.generate_button.configure(command=callback)
+
 
 class ApiConfigFrame(ttk.Frame):
     """Custom widget to configure options related to the OpenRouter API."""
