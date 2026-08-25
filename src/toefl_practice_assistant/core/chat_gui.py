@@ -113,6 +113,7 @@ class LLMChatFrame(ttk.Frame):
             width=70,
             padx=5,
             pady=5,
+            wrap="word",
         )
         self.message_textbox.grid(row=0, column=0, sticky="nsew")
 
