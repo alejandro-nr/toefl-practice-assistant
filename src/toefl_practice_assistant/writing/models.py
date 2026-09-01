@@ -3,12 +3,14 @@ from typing import Any
 
 class EmailExercise:
     def __init__(
-        self, context: str, recipient: str, objectives: list[str], bonus: list[str]
+        self,
+        context: str,
+        recipient: str,
+        objectives: list[str],
     ):
         self.context = context
         self.recipient = recipient
         self.objectives = objectives
-        self.bonus = bonus
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "EmailExercise":
@@ -17,7 +19,6 @@ class EmailExercise:
             context=data["context"],
             recipient=data["recipient"],
             objectives=data["objectives"],
-            bonus=data["bonus"],
         )
 
     def __str__(self):
@@ -27,7 +28,5 @@ class EmailExercise:
         )
         for objective in self.objectives:
             s += "  - " + objective + "\n"
-        s += "\nBonus points if you do the following:\n"
-        for challenge in self.bonus:
-            s += "  - " + challenge + "\n"
+
         return s.strip()

@@ -15,7 +15,6 @@ Your job is to generate new practice exercises for this task. Each exercise must
 1. "context": A short paragraph (2-4 sentences) describing the situation and motivation for writing the email. It should be a plausible campus-life scenario.
 2. "recipient": Who the email is addressed to (e.g., a professor, a dorm advisor, the housing office, a classmate, a campus librarian).
 3. "objectives": A list of 2-3 objectives the email must accomplish. Each objective should be a short, clear instruction (e.g., "Ask to reschedule the meeting", "Suggest an alternative location", "Explain why you cannot attend").
-4. "bonus": A list of 2-3 optional extra challenges to help the test-taker practice specific writing skills. Each bonus item should ask them to use a particular language feature, such as a sentence type (statement, question, conditional, etc.) or an idiomatic/functional phrase (e.g., "sounds good", "let me know", "I was wondering if..."). Phrase these as short instructions, e.g., "Include at least one conditional sentence" or "Use the phrase 'let me know' naturally in your email".
 
 ## Output format
 Respond ONLY with a valid JSON object with this exact structure, and no additional text before or after it:
@@ -23,8 +22,7 @@ Respond ONLY with a valid JSON object with this exact structure, and no addition
 {
   "context": "string",
   "recipient": "string",
-  "objectives": ["string", "string", ...],
-  "bonus": ["string", "string", ...]
+  "objectives": ["string", "string", ...]
 }
 
 ## Example
@@ -36,11 +34,6 @@ Respond ONLY with a valid JSON object with this exact structure, and no addition
     "Explain the problem with the heating",
     "Ask when it will be fixed",
     "Request a temporary solution, such as portable heaters"
-  ],
-  "bonus": [
-    "Include at least one question",
-    "Use the phrase 'as soon as possible' naturally in your email",
-    "Include one conditional sentence"
   ]
 }"""
 
@@ -67,13 +60,8 @@ EMAIL_GENERATION_FORMAT = {
                     "description": "2-3 objectives the email must accomplish, phrased as short, clear instructions.",
                     "items": {"type": "string"},
                 },
-                "bonus": {
-                    "type": "array",
-                    "description": "2-3 optional extra challenges practicing a specific language feature (sentence type or idiomatic phrase), phrased as short instructions.",
-                    "items": {"type": "string"},
-                },
             },
-            "required": ["context", "recipient", "objectives", "bonus"],
+            "required": ["context", "recipient", "objectives"],
             "additionalProperties": False,
         },
     },
@@ -156,7 +144,7 @@ You are a supportive writing coach helping a student prepare for the TOEFL iBT e
 You are helping the student practice the "Writing an Email" task, part of the Writing section. In this task, the test-taker is given a short scenario set in a campus-life context, along with 2-3 specific objectives they must accomplish in an email. They have 7 minutes to plan and write a response of about 100-150 words. This task measures how clearly the student writes, how well they stay on topic, and how well they follow basic writing conventions such as tone and organization.
 
 ## Your role
-The student will share a practice exercise (scenario, recipient, objectives, and optionally bonus challenges) and their own attempt at writing the email. Your job is to act as a coach: help them notice what's working, what could improve, and how to get closer to a strong response — without writing the email for them. Only provide a corrected or model version if the student explicitly asks for one.
+The student will share a practice exercise (scenario, recipient and objectives) and their own attempt at writing the email. Your job is to act as a coach: help them notice what's working, what could improve, and how to get closer to a strong response — without writing the email for them. Only provide a corrected or model version if the student explicitly asks for one.
 
 Ground your feedback in the strategies and grading criteria below whenever relevant, referencing them by name so the student connects your feedback to concrete, reusable techniques.
 

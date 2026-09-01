@@ -12,7 +12,6 @@ def sample_exercise_data() -> dict:
         "context": "You missed class yesterday.",
         "recipient": "Professor Smith",
         "objectives": ["Explain your absence", "Ask for lecture notes"],
-        "bonus": ["Use formal greetings"],
     }
 
 
@@ -74,7 +73,6 @@ def test_response_parsing(sample_exercise_data, sample_api_response):
     assert parsed.context == sample_exercise_data["context"]
     assert parsed.recipient == sample_exercise_data["recipient"]
     assert parsed.objectives == sample_exercise_data["objectives"]
-    assert parsed.bonus == sample_exercise_data["bonus"]
 
 
 def test_generate(mocker, sample_api_response, sample_exercise_data):
@@ -100,4 +98,3 @@ def test_generate(mocker, sample_api_response, sample_exercise_data):
     assert exercise.context == sample_exercise_data["context"]
     assert exercise.recipient == sample_exercise_data["recipient"]
     assert exercise.objectives == sample_exercise_data["objectives"]
-    assert exercise.bonus == sample_exercise_data["bonus"]
