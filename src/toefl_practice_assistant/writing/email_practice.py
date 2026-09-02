@@ -149,7 +149,7 @@ class PromptsConfigFrame(ttk.Frame):
             parent=tags_frame,
             label_text="Exercise tag",
             label_width=10,
-            initial_entry_text="[EX]",
+            initial_entry_text="EE",
         )
         self.exercise_tag_entry.grid(row=0, column=0, sticky="we", padx=2, pady=5)
 
@@ -157,7 +157,7 @@ class PromptsConfigFrame(ttk.Frame):
             parent=tags_frame,
             label_text="Solution tag",
             label_width=10,
-            initial_entry_text="[SOL]",
+            initial_entry_text="SS",
         )
         self.solution_tag_entry.grid(row=1, column=0, sticky="we", padx=2, pady=5)
 
