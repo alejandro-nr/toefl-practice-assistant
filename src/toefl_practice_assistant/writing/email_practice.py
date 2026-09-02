@@ -164,9 +164,61 @@ class PromptsConfigFrame(ttk.Frame):
         generation_prompts_frame = ttk.LabelFrame(
             self, text="Prompt for exercise generation:"
         )
-        generation_prompts_frame.rowconfigure(index=0, weight=1)
+        generation_prompts_frame.rowconfigure(index=4, weight=1)
         generation_prompts_frame.columnconfigure(index=0, weight=1)
         generation_prompts_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+
+        self.prompt_register_combobox = LabeledCombobox(
+            parent=generation_prompts_frame,
+            text="Register",
+            label_width=12,
+            combobox_width=10,
+            choices=["formal", "informal"],
+        )
+        self.prompt_register_combobox.grid(row=0, column=0, sticky="we", padx=5, pady=2)
+
+        self.prompt_objective_combobox = LabeledCombobox(
+            parent=generation_prompts_frame,
+            text="Objective",
+            label_width=12,
+            combobox_width=10,
+            choices=[
+                "giving advice",
+                "making an invitation",
+                "proposing a solution",
+                "requesting information",
+                "resolving a logistical issue",
+                "addressing a campus service or resource",
+                "cancelling something",
+                "notifying someone of a change",
+                "apologizing for something",
+            ],
+        )
+        self.prompt_objective_combobox.grid(
+            row=1, column=0, sticky="we", padx=5, pady=2
+        )
+
+        self.prompt_difficulty_combobox = LabeledCombobox(
+            parent=generation_prompts_frame,
+            text="Difficulty",
+            label_width=12,
+            combobox_width=10,
+            choices=[
+                "easy",
+                "normal",
+                "hard",
+            ],
+        )
+        self.prompt_difficulty_combobox.grid(
+            row=2, column=0, sticky="we", padx=5, pady=2
+        )
+
+        self.build_prompt_button = ttk.Button(
+            generation_prompts_frame,
+            text="Build Prompt",
+            command=self.build_and_set_prompt,
+        )
+        self.build_prompt_button.grid(row=3, column=0, sticky="e", padx=5, pady=2)
 
         self.prompt_textbox = tk.Text(
             generation_prompts_frame,
@@ -174,11 +226,36 @@ class PromptsConfigFrame(ttk.Frame):
             height=5,
             wrap="word",
         )
-        self.prompt_textbox.grid(row=0, column=0, sticky="nswe", padx=5)
+        self.prompt_textbox.grid(row=4, column=0, sticky="nswe", padx=5)
         self.prompt_textbox.insert("1.0", default_prompt)
 
     def get_exercise_generation_prompt(self) -> str:
         return self.prompt_textbox.get("1.0", tk.END).strip()
+
+    def set_exercise_generation_prompt(self, prompt: str) -> None:
+        self.prompt_textbox.delete("1.0", tk.END)
+        self.prompt_textbox.insert("1.0", prompt)
+
+    def get_prompt_register(self) -> str:
+        return self.prompt_register_combobox.get_choice()
+
+    def get_prompt_objective(self) -> str:
+        return self.prompt_objective_combobox.get_choice()
+
+    def get_prompt_difficulty(self) -> str:
+        return self.prompt_difficulty_combobox.get_choice()
+
+    def build_and_set_prompt(self) -> None:
+        difficulty = self.get_prompt_difficulty()
+        context_complexity = "simple" if difficulty in ["easy", "normal"] else "complex"
+        num_objectives = 2 if difficulty == "easy" else 3
+
+        prompt = "Generate a new email exercise with the following specifications:"
+        prompt += f"\n- Difficulty: {difficulty} ({context_complexity} context with {num_objectives} specific objectives)."
+        prompt += f"\n- Register: {self.get_prompt_register()}."
+        prompt += f"\n- General objective: {self.get_prompt_objective()}."
+
+        self.set_exercise_generation_prompt(prompt)
 
     def get_exercise_tag(self) -> str:
         return self.exercise_tag_entry.get()
